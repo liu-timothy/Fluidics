@@ -47,6 +47,7 @@ class Protocol:
         self.protocols['dredFISHVolumeCheck'] = self.dredFISHVolumeCheck
         self.protocols['dendcycle'] = self.dendcycle
         self.protocols['dendbca'] = self.dendbca
+        self.protocols['timothy_clampFISH_amplification'] = self.timothy_clampFISH_amplification
         self.protocols['blankprotocol'] = self.blankprotocol
         self.protocols['bdna'] = self.bdna
         self.protocols['dendcyclegradient'] = self.dendcyclegradient
@@ -235,6 +236,48 @@ class Protocol:
         steps = []
 
         steps.append(self.replace_volume(chambers,'WBuffer',self.rinse_volume,speed=self.speed,pause=self.rinse_time))
+
+        steps.append(self.replace_volume('A', str('Hybe' + str(1*int(hybe)+0)),self.hybe_volume,speed=self.speed,pause=0))
+        steps.append(self.replace_volume('B',str('Hybe' + str(1*int(hybe)+3)),self.hybe_volume,speed=self.speed,pause=0))
+        steps.append(self.replace_volume('C',str('Hybe' + str(1*int(hybe)+6)),self.hybe_volume,speed=self.speed,pause=0))
+        steps.append(self.replace_volume("D",str('Hybe' + str(1*int(hybe)+9)),self.hybe_volume,speed=self.speed,pause=0))
+        steps.append(self.replace_volume('E',str('Hybe' + str(1*int(hybe)+12)),self.hybe_volume,speed=self.speed,pause=0))
+        steps.append(self.replace_volume('F',str('Hybe' + str(1*int(hybe)+15)),self.hybe_volume,speed=self.speed,pause=wait_time))
+
+        steps.append(self.replace_volume(chambers,'WBuffer',self.rinse_volume,speed=self.speed,pause=self.rinse_time))
+        steps.append(self.replace_volume(chambers,'WBuffer',self.rinse_volume,speed=self.speed,pause=self.rinse_time))
+        steps.append(self.replace_volume(chambers,'TBS',self.rinse_volume,speed=self.speed,pause=0))
+        steps.append(self.replace_volume(chambers,'TBS',self.rinse_volume,speed=self.speed,pause=0))
+        return pd.concat(steps,ignore_index=True)
+
+    def timothy_clampFISH_amplification(self, chambers, hybe):
+        # single round amplification
+        wait_time = 60*60
+        if '+' in hybe:
+            hybe,wait_time = hybe.split('+')
+            wait_time = 60*int(wait_time) # minutes
+        steps = []
+        
+        # Wash w/ 10% wash buffer (x2), 1min each
+        steps.append(self.replace_volume(chambers,'TBS', self.rinse_volume, speed=self.speed, pause=self.rinse_time)) #10% Wash Buffer (not TBS)
+        steps.append(self.replace_volume(chambers,'TBS', self.rinse_volume, speed=self.speed, pause=self.rinse_time)) #10% Wash Buffer (not TBS)
+
+        # Wash w/10% wash buffer for 10min @37C
+        steps.append(self.replace_volume(chambers,'TBS', self.rinse_volume, speed=self.speed, pause=self.rinse_time)) #10%Wash Buffer (not TBS)
+
+        #Add 2X SSC
+        steps.append(self.replace_volume(chambers,'TBS', self.rinse_volume, speed=self.speed, pause=self.rinse_time)) #2X SSC (not TBS)
+
+        #Aspirate 2X SSC
+
+        #Add Click Reaction Mixture (Sodium Ascorbate+CuSO4+BTTAA Solution)
+
+        #Incubate at 37C for 10min
+
+        #Aspirate click reaction mixture
+
+        #Wash w/ 30% Wash Buffer @37C for 5 min
+        
 
         steps.append(self.replace_volume('A', str('Hybe' + str(1*int(hybe)+0)),self.hybe_volume,speed=self.speed,pause=0))
         steps.append(self.replace_volume('B',str('Hybe' + str(1*int(hybe)+3)),self.hybe_volume,speed=self.speed,pause=0))
